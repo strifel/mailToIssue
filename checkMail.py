@@ -23,7 +23,7 @@ for fileName in os.listdir("accounts/"):
         if 'ssl' in config:
             ssl = config['ssl']
         if 'delete' in config:
-            delete_after = config['delete']
+            delete_after = int(config['delete'])
             if delete_after < 0:
                 delete_after = 0
 
