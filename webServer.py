@@ -13,8 +13,12 @@ with open("config.json") as f:
     password = config['password']
     client_id = config['client_id']
     client_secret = config['client_secret']
-
 tokenCache = {}
+try:
+    with open("cache.json") as f:
+        tokenCache = json.loads(f.read())
+except FileNotFoundError:
+    pass
 app = Flask(__name__)
 
 
@@ -59,6 +63,8 @@ def register():
     with open("accounts/" + request.json['username'] + ".json", "w") as f:
         data['gh_token'] = tokenCache[token_code]
         tokenCache[token_code] = None
+        with open('cache.json', "w") as f:
+            f.write(json.dumps(tokenCache))
         f.write(json.dumps(request.json))
         f.close()
     return json.dumps({"message": "Success"})
@@ -79,6 +85,8 @@ def callback():
     if 'access_token' not in response.json():
         abort(400)
     tokenCache[token_id] = response.json()['access_token']
+    with open('cache.json', "w") as f:
+        f.write(json.dumps(tokenCache))
     return redirect('/add#' + token_id)
 
 

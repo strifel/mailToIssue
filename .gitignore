@@ -1,3 +1,4 @@
 accounts/
 venv/
 config.json
+cache.json
