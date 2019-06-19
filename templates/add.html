@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add</title>
+</head>
+<body>
+<label for="username">Username for IMAP</label><input id="username" type="text" placeholder="name@domain.tld"><br>
+<label for="password">Password for IMAP</label><input id="password" type="password" placeholder="password"><br>
+<label for="server">Server for IMAP</label><input id="server" type="text" placeholder="mail.domain.tld"><br>
+<label for="delete">Delete old messages after X days. (0 to disable)</label><input min=0 id="delete" type="number"
+                                                                                   value="0"><br>
+<label for="ssl">Use ssl</label><input id="ssl" type="checkbox" checked><br>
+<label for="gh_repo">Github Repository</label><input id="gh_repo" type="text" placeholder="strifel/mailToIssue"><br>
+<label for="gh_token">Token for github. (Internal token)</label><input id="gh_token" type="text" disabled><br>
+<button onclick="register()">Register service</button>
+</body>
+</html>
+<script>
+    if (!location.hash || location.hash.length === 1) {
+        location.href = '/github'
+    }
+    document.getElementById('gh_token').value = location.hash.substr(1);
+
+    function register() {
+        let values = {};
+        let valueComplete = true;
+        document.querySelectorAll('input').forEach((input) => {
+            if (!input.value || input.value === '') {
+                alert('Not all fields are filled!');
+                valueComplete = false;
+                return;
+            }
+            if (input.type === 'checkbox') {
+                values[input.id] = input.checked;
+            } else {
+                values[input.id] = input.value;
+            }
+        });
+        if (valueComplete) {
+            let jsonValues = JSON.stringify(values);
+            let pw = prompt('Please enter the password to register a new service.');
+            let request = new XMLHttpRequest();
+            request.onreadystatechange = () => {
+                if (request.readyState === 4) {
+                    if (request.status === 200) {
+                        alert("Successfully entered.")
+                    } else {
+                        alert("There was some error when adding. Status code: " + request.status)
+                    }
+                }
+            };
+            request.open('POST', '/register');
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.setRequestHeader('Authorization', pw);
+            request.send(jsonValues);
+        }
+    }
+
+</script>

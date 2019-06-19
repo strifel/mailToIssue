@@ -19,6 +19,8 @@ for fileName in os.listdir("accounts/"):
             ssl = config['ssl']
         if 'delete' in config:
             delete_after = config['delete']
+            if delete_after < 0:
+                delete_after = 0
 
     with Imbox(server,
                username=username,
