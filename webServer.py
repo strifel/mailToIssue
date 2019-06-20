@@ -63,8 +63,8 @@ def register():
     with open("accounts/" + request.json['username'] + ".json", "w") as f:
         data['gh_token'] = tokenCache[token_code]
         tokenCache[token_code] = None
-        with open('cache.json', "w") as f:
-            f.write(json.dumps(tokenCache))
+        with open('cache.json', "w") as cache:
+            cache.write(json.dumps(tokenCache))
         f.write(json.dumps(request.json))
         f.close()
     return json.dumps({"message": "Success"})
