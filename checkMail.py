@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 import os
 import requests
 
+print("Running mailToIssue!")
+
 for fileName in os.listdir("accounts/"):
     username = ""
     password = ""
@@ -26,14 +28,15 @@ for fileName in os.listdir("accounts/"):
             delete_after = int(config['delete'])
             if delete_after < 0:
                 delete_after = 0
+    print("Config for " + username + " loaded!")
 
     with Imbox(server,
                username=username,
                password=password,
                ssl=ssl) as inbox:
-
+        print("Connected...", end="")
         inbox_messages = inbox.messages(unread=True)
-
+        print("mails loaded")
         for uid, message in inbox_messages:
             issueReport = ""
             issueReport += "# " + message.subject + "\r\n"
@@ -48,6 +51,7 @@ for fileName in os.listdir("accounts/"):
             }, headers={
                 'Authorization': 'token ' + token
             })
+            print("Issue " + message.subject + " created!")
 
         if delete_after > 0:
             date = datetime.now() - timedelta(days=delete_after)
